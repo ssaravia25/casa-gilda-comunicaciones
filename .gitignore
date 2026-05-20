@@ -1,0 +1,6 @@
+.vercel/
+.DS_Store
+*.log
+Thumbs.db
+.idea/
+.vscode/

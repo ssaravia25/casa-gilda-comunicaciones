@@ -1,0 +1,65 @@
+# Casa Gilda Comunicaciones — config Apache para Hostinger
+# Sitio 100% estático servido desde public_html
+
+# --- Forzar HTTPS y www→apex -------------------------------------------------
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # HTTPS obligatorio
+    RewriteCond %{HTTPS} !=on
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+
+    # www.casagildacomunicaciones.com → casagildacomunicaciones.com
+    RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+    RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
+
+    # URLs limpias: si la request no es archivo/carpeta, intentar agregar .html
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} !\.[a-zA-Z0-9]+$
+    RewriteRule ^(.+?)/?$ $1.html [L]
+
+    # Si alguien entra a /servicios.html, redirigir a /servicios (canónica limpia)
+    RewriteCond %{THE_REQUEST} \s/+(.+?)\.html[\s?] [NC]
+    RewriteRule ^ /%1 [R=301,L]
+</IfModule>
+
+# --- 404 personalizada -------------------------------------------------------
+ErrorDocument 404 /index.html
+
+# --- Compresión gzip ---------------------------------------------------------
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript
+    AddOutputFilterByType DEFLATE application/javascript application/json application/xml
+    AddOutputFilterByType DEFLATE image/svg+xml
+</IfModule>
+
+# --- Cache de assets estáticos ----------------------------------------------
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresDefault                          "access plus 1 month"
+    ExpiresByType text/html                 "access plus 0 seconds"
+    ExpiresByType text/xml                  "access plus 0 seconds"
+    ExpiresByType application/xml           "access plus 0 seconds"
+    ExpiresByType text/css                  "access plus 1 year"
+    ExpiresByType application/javascript    "access plus 1 year"
+    ExpiresByType image/jpeg                "access plus 1 year"
+    ExpiresByType image/png                 "access plus 1 year"
+    ExpiresByType image/webp                "access plus 1 year"
+    ExpiresByType image/svg+xml             "access plus 1 year"
+    ExpiresByType image/x-icon              "access plus 1 year"
+    ExpiresByType font/woff                 "access plus 1 year"
+    ExpiresByType font/woff2                "access plus 1 year"
+</IfModule>
+
+# --- Headers de seguridad mínimos -------------------------------------------
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# --- Bloquear acceso a archivos sensibles -----------------------------------
+<FilesMatch "^\.(git|env|htaccess|gitignore|DS_Store)">
+    Require all denied
+</FilesMatch>
