@@ -24,8 +24,9 @@ jobs:
           local-dir: ./
           server-dir: /public_html/
           exclude: |
-            **/.git*
+            .git/**
             **/.git*/**
+            **/.git*
             **/.vercel/**
             **/node_modules/**
             **/.DS_Store
