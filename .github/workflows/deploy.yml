@@ -9,8 +9,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+
+      - name: Preparar archivos a desplegar
+        run: |
+          mkdir -p dist
+          rsync -av --exclude='.git' --exclude='.github' \
+                --exclude='.vercel' --exclude='node_modules' \
+                --exclude='.DS_Store' ./ dist/
 
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
@@ -21,13 +26,5 @@ jobs:
           port: 21
           protocol: ftps
           security: loose
-          local-dir: ./
+          local-dir: ./dist/
           server-dir: /public_html/
-          exclude: |
-            .git/**
-            **/.git*/**
-            **/.git*
-            **/.vercel/**
-            **/node_modules/**
-            **/.DS_Store
-            .github/**
