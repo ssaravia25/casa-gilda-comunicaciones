@@ -13,6 +13,10 @@
     RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
     RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
 
+    # El listado del blog (blog.html) colisiona con la carpeta /blog/ de artículos.
+    # Servir blog.html para /blog y /blog/ ANTES de que mod_dir agregue la barra (evita el 403).
+    RewriteRule ^blog/?$ blog.html [L]
+
     # URLs limpias: si la request no es archivo/carpeta, intentar agregar .html
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
