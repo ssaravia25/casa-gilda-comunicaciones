@@ -14,8 +14,11 @@
     RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
 
     # El listado del blog (blog.html) colisiona con la carpeta /blog/ de artículos.
-    # Servir blog.html para /blog y /blog/ ANTES de que mod_dir agregue la barra (evita el 403).
-    RewriteRule ^blog/?$ blog.html [L]
+    # /blog/ (con barra) → /blog (sin barra): si no, las rutas relativas de assets se
+    # resuelven como /blog/assets/... (404) y la página sale sin estilos.
+    RewriteRule ^blog/$ /blog [R=301,L]
+    # /blog → servir blog.html ANTES de que mod_dir agregue la barra (evita el 403).
+    RewriteRule ^blog$ blog.html [L]
 
     # URLs limpias: si la request no es archivo/carpeta, intentar agregar .html
     RewriteCond %{REQUEST_FILENAME} !-f
