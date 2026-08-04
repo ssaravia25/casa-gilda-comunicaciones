@@ -1,4 +1,14 @@
 {
-  "cleanUrls": true,
-  "trailingSlash": false
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "https://casagildacomunicaciones.com/",
+      "permanent": true
+    },
+    {
+      "source": "/(.*)",
+      "destination": "https://casagildacomunicaciones.com/$1",
+      "permanent": true
+    }
+  ]
 }
